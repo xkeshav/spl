@@ -29,7 +29,6 @@ if (version_compare(PHP_VERSION, '5.3.7', '<')) {
 // loading config
 require_once __DIR__.'/constant.php';
 // loading the Official PHP Password Hashing Compatibility Library (see more in the README file)
-require_once LIBS.'external/PasswordCompatibilityLibrary.php';
 
 ########## DUMP VARIABLE ###########################
 // Kint::dump($GLOBALS, $_SERVER); // any nuber of parameters
