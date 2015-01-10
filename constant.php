@@ -9,7 +9,7 @@
  *
  * @copyright  Dotsquares Technologies , Dec 10,2014
  * @package  strictly with PHP 5.3 +
- * @author Virendra Rathore
+ * @author Keshav Mohta
  * @todo  all constant on different page
  * @access  private
  * @category  configuration
