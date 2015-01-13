@@ -1,0 +1,89 @@
+.wrapper {
+    float: left;
+    position: relative;
+}
+
+#left{
+   float: left;
+   /*margin-right:2px;*/
+   width: 20%;
+   background-color: #455;
+   /*border-right : 1px solid red;*/
+}
+#right{
+   float: left;
+   clear: right;
+   width: 80%;
+}
+section  > div {
+    float: left;
+    min-height: 40px;
+    margin: 3px 1px;
+    border-bottom: 1px dashed #B6CD0B;
+    width: 98%;
+}
+#selectedScreen {
+    margin: 3px 2px;
+    width:100%;
+    color:#fff;
+    height:30px;
+}
+#selectedScreen option {
+    line-height: 22px;
+    cursor: pointer;
+    vertical-align: middle;
+    height: 30px
+}
+#mainThumb {
+    min-height: 205px;
+    padding: 4px;
+}
+#slider {
+    margin-left:10px;
+}
+div.datePick {
+    min-height : 250px;
+    padding:5px 2px;
+}
+div.clickTime {
+    float: left;
+    clear:both;
+    border-bottom: 1px dashed #dde;
+    width: 90%;
+    line-height:22px;
+    margin :2px 0;
+    padding: .5em;
+    color: #fff;
+}
+div.clickTime label {
+    float: left;
+}
+div.clickTime span {
+    float:right;
+    display: none;
+    cursor: pointer;
+}
+div.clickTime:hover span{
+    display: inline-block;
+}
+div.clickTime:hover {
+    padding: .5em .7em;
+    background-color: #141518;
+    font-size: larger;
+    cursor: pointer;
+}
+
+.highlightedTime {
+    padding: .5em .7em;
+    background-color: #141518;
+    font-size: larger;
+    cursor: pointer;
+    color: #fff;
+}
+
+.mainimage {
+    width: 100%;
+    height: auto;
+    width: auto\9; /* ie8 */
+    border:1px white solid;
+}

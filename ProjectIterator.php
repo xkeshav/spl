@@ -2,7 +2,7 @@
 
 // This class will find the latest thumb of each folder
 // error_reporting(E_ALL ^ E_NOTICE);
-// @author Virendra
+// @author Keshav Mohta
 // @date Dec 19, 2014
 // $loc = "/opt/lampp/archive/data";
 // $obj_latest = new latest();

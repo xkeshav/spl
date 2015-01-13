@@ -1,8 +1,20 @@
 <?php
-// error_reporting(E_ALL& ~(E_WARNING|E_NOTICE));
+/**
+ * @access private
+ * @author X <nomail@boun.cr>
+ * @copyright Dotsquares technologies
+ * @example  this file is called from defaultview.php in ajax functions and it will return the data this function use projectItertor class
+ * @date( Jan 12,2015)
+ * @copyright This code is regulated on dotsquares technlogies, any changes must be inform to the author
+ * @version 1.12
+ **/
+
+error_reporting(E_ALL& ~(E_WARNING|E_NOTICE));
+
 $obj_prj = new ProjectIterator();
 if(!empty($_POST)) {
     // var_dump($_POST);
+    $info ='';
     extract($_POST);
     $selectedDateYM = $selectedYear.$selectedMonth;
     $obj_prj->getThumb(ARCHIVE.DS.'QGC3-7', $selectedCamera, $selectedDateYM);
@@ -78,16 +90,17 @@ if(!empty($_POST)) {
                 $msg = "Given date $selectedDate have no foto";
                 $recentThumb = $obj_prj->getRecentThumb();
                 // !d($recentThumb);
-
-                $output = [false, 'foto'=> $recentThumb, 'info'=>$msg ];
+                $recentThumb_[] = ['thumb'=> $recentThumb['thumb'], 'path'=>$recentThumb['path'] ];
+                // $recentThumb_ = ['thumb'=> $recentThumb.thumb, 'path'=>$recentThumb.path]
+                $output = [false, 'foto'=> $recentThumb_, 'waqt'=>NULL, $info => $msg ];
                 /**
                 {
                     "0": false,
-                    "foto": {
+                    "foto": [
                         "thumb": "s0320140731121908_tn.jpg",
                         "path": "/opt/lampp/htdocs/eonfx/data/archive_links/QGC3-7/s3/201407/thumbnails"
-                    },
-                    "info": "Given date 20 have no foto"
+                    ],
+                    "waqt": null
                 }
                 *
                 **/
@@ -101,17 +114,19 @@ if(!empty($_POST)) {
     } else {
         $msg = "Given month $selectedMonth have no foto";
         $recentThumb = $obj_prj->getRecentThumb();
-        $output = [false, 'foto'=> $recentThumb, 'info'=>$msg ];
+        //!d($recentThumb);
+        $recentThumb_[] = ['thumb'=> $recentThumb['thumb'], 'path'=>$recentThumb['path'] ];
+        $output = [false, 'foto'=> $recentThumb_, 'waqt'=>NULL , $info => $msg ];
     }
     $return = json_encode($output, JSON_UNESCAPED_SLASHES);
     // !d($return);
     echo $return;
-
     // preg_grep('/$thumb_partial_name/d_tn.jpg/',$tk);
     // preg_grep('/$thumb_partial_name/d_tn.jpg/',$FolderThumbList);
     // echo $thumb = "s".$selectedCamera.$selectedDateYM.$selectedDate."_tn.jpg";
 }
 
+// we retriev month name on select of screen , which canb further use while choosing date from calendar
 if ( !empty($_GET['screen']) ) {
     $selectedScreen = $_GET['screen'];
     $obj_prj->getThumb(ARCHIVE.DS.'QGC3-7', $selectedScreen);
