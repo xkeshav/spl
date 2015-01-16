@@ -19,10 +19,12 @@
  *
  *
  */
-define('PTOTOCOL','http://');
+
+require __DIR__.'/kint/Kint.class.php';
+define('DS', DIRECTORY_SEPARATOR);
+define('PROTOCOL', $_SERVER['REQUEST_SCHEME'].':'.DS.DS); // http://
 // This will gives folder name of project if this file (config.php is on right place in directory structure inside one folder
-define('PROJECT_FOLDER', basename(dirname(__DIR__))); // ==> 'eonfx'
-// d(PROJECT_FOLDER);
+define('PROJECT_FOLDER', basename(__DIR__)); // ==> 'spl'
 // echo "<pre>";print_r($_SERVER);
 // define('PROJECT_FOLDER', 'eonfx');
 // d($_SERVER);
@@ -32,30 +34,15 @@ define('PROJECT_FOLDER', basename(dirname(__DIR__))); // ==> 'eonfx'
  * if you are using a (differen) port, then put this in here, like http://mydomain:8888/mvc/
  * TODO: when not using subfolder, is the trailing slash important ?
  */
-define('HOST', PTOTOCOL.$_SERVER['HTTP_HOST']); // ==> 'http://192.168.0.228'
-define('PROJECT_ROOT', $_SERVER['DOCUMENT_ROOT'].PROJECT_FOLDER);  // ==> '/opt/lampp/htdocs/eonfx'
-define('URL', HOST.DS.PROJECT_FOLDER); // ==> 'http://192.168.0.228/eonfx
-// d(PROJECT);
+define('HOST', $_SERVER['HTTP_HOST']); // ==> '192.168.0.228'
+define('URL', PROTOCOL.HOST.DS.PROJECT_FOLDER);  //'http://192.168.0.228/eonfx'
+define('PATH', $_SERVER['DOCUMENT_ROOT'].PROJECT_FOLDER);  // ==> '/opt/lampp/htdocs/spl'
 // physical location where we store all project images and thumbnails
 /**
  * Configuration for: Folders
  * Here you define where your folders are. Unless you have renamed them, there's no need to change this.
  */
-// don't forget to make this folder writeable via chmod 775
-// the slash at the end is VERY important!
-
-define('LIBS', PROJECT_ROOT.DS.'libs'.DS);
-// define('LIBS', 'libs'.DS); /* TODO : also works with this line in localhost.! */
-define('CSSPATH', URL.'/public/css');
-define('JSPATH', URL.'/public/js');
-define('IMAGEPATH', URL.'/public/images');
-define('AVATAR_PATH', URL.'/public/avatars'.DS);
-define('LOGOPATH', URL.'/data/client_logos'.DS);
-
-
-/**
- * Archive Folder..outside of apache root
- **/
-define('ARCHIVE', './data/archive_links/');
-
-
+define('CSS', URL.DS.'css');
+define('JS', URL.DS.'js');
+define('IMG', URL.DS.'images');
+define('ARCHIVE', dirname($_SERVER['DOCUMENT_ROOT']).'/archive');

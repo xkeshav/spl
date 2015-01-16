@@ -1,6 +1,10 @@
-<?php
-    $obj_prj = new ProjectIterator();
-    $projectFolderDir = ARCHIVE.DS.'QGC3-7';
+<?php namespace Directree\Example;
+include_once 'header.php';
+require_once 'ProjectIterator.php';
+require_once 'constant.php';
+
+    $obj_prj = new \Directree\ProjectIterator();
+    $projectFolderDir = ARCHIVE.DS.'projectFoto';
     // $obj_prj->getThumb(ARCHIVE.DS.'QGC3-7','s3', '201408');
     // get ALL screen /camera list of selected project and show on left panel dropdown
     $screenList = $obj_prj->getProjectScreenList($projectFolderDir);
@@ -15,9 +19,9 @@
         <div id="screen">
             <select class="dropdown" id="selectedScreen">
                 <option value="" selected disabled style="color:#000"  >Select Camera</option>
-            <?php foreach ($screenList as $sc=>$sv) {
+        <?php foreach ($screenList as $sc => $sv) {
                 echo "<option value='$sc' title='$sc'>Camera $sc</option>";
-                 } // end o foreach ?>
+} // end o foreach ?>
                 <!--   <option value="s2" title="s2">Camera s2</option> -->
             </select>
         </div>

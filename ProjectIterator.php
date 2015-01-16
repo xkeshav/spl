@@ -1,13 +1,27 @@
-<?php
+<?php namespace Directree;
 
-// This class will find the latest thumb of each folder
-// error_reporting(E_ALL ^ E_NOTICE);
-// @author Keshav Mohta
-// @date Dec 19, 2014
-// $loc = "/opt/lampp/archive/data";
-// $obj_latest = new latest();
-// $thumbList = $obj_latest->latestThumb($loc);
-class ProjectIterator extends Controller
+/**
+ * @access  Public
+ * @example called from default.php
+ * @author      Keshav Mohta <xkeshav@gmail.com>
+ * @copyright  2014-01-13
+ * @name   ProjectIterator.php
+ * @todo divide further functions and optimize the code
+ * @description
+ * This class is useful to find data from  multi leveled directory system and interate over folders using SPL function .Suppose you require to find latest thumb  of latest created folder from diffrent date folder of a location
+ *
+ * Files are saved in
+ * error_reporting(E_ALL ^ E_NOTICE);
+ * @date Dec 19, 2014
+ * $loc = "/opt/lampp/archive/data";
+ * $obj_latest = new latest();
+ * $thumbList = $obj_latest->latestThumb($loc);
+ */
+use DirectoryIterator;
+use RecursiveDirectoryIterator;
+use FilesystemIterator;
+
+class ProjectIterator
 {
     public static $thumb_folder = 'thumbnails';
     private $basepath;
@@ -19,12 +33,14 @@ class ProjectIterator extends Controller
     protected $latestThumbList = [];
      // all screen latest thumb list
     protected $recentThumb = [];
-    protected $dayWithTime = [];
      // [thumb name , thumb location]
+    protected $dayWithTime = [];
 
-    public function __construct() {
+    public function __construct()
+    {
         // var_dump(__FILE__);
         // var_dump($base);
+        // echo basename(dirname(__DIR__));
         $this->iterator = new DirectoryIterator(dirname(__FILE__));
         // echo $this->iterator->getPath();
         $this->basepath = $this->iterator->getPath();
@@ -33,7 +49,8 @@ class ProjectIterator extends Controller
     }
 
     /** get camera list of a project  */
-    public function getProjectScreenList($projectDir){
+    public function getProjectScreenList($projectDir)
+    {
         $dir = (func_num_args()) ? $projectDir : $this->basepath;
         $RealPath = realpath($dir);
         // d($RealPath);
@@ -92,7 +109,8 @@ class ProjectIterator extends Controller
                 's0520141208110525_tn.jpg' => object SplFileInfo (0)
     */
 
-    public function getThumb($givenDir = false, $givenCamera = false, $givenDate = false) {
+    public function getThumb($givenDir = false, $givenCamera = false, $givenDate = false)
+    {
         // $args = func_get_args();
         // d($args);
         // $dir = (func_num_args()) ? $givenDir : $this->basepath;
@@ -157,7 +175,8 @@ class ProjectIterator extends Controller
 
 
     */
-    private function findLatest($dir, $screen = false, $samay = false) {
+    private function findLatest($dir, $screen = false, $samay = false)
+    {
         $farg = func_get_args();
         // d($farg);
         // d($dir);
@@ -235,7 +254,7 @@ class ProjectIterator extends Controller
             // d($isFile , $isReadable);
             if ($isFile && $isReadable) {
                 //save into protected variable
-                $this->recentThumb = ['thumb'=>$t_name, 'path'=>$t_path];
+                $this->recentThumb = ['thumb' => $t_name, 'path' => $t_path];
                 //return [$t_name,$t_path];
             }
         } else {
@@ -249,7 +268,8 @@ class ProjectIterator extends Controller
     @return array of object SplFileInfo in namewsie ASC order
     */
 
-    private function getAllFolder($currentDir) {
+    private function getAllFolder($currentDir)
+    {
         // d($mainDir);
         $subFolder = [];
         foreach ($currentDir as $sub) {
@@ -261,22 +281,26 @@ class ProjectIterator extends Controller
         // d($subFolder);
         // $Dir_ = iterator_to_array($subFolder);
         ksort($subFolder);
+
         return $subFolder;
     }
 
     /* Get all thumb images inside thumbnail folder
     @param object RecursiveDirectoryIterator $thumbDir
     */
-    private function hasThumbnailFolder($t_dir) {
+    private function hasThumbnailFolder($t_dir)
+    {
         // d($t_dir['thumbnails']);
         if ($t_dir['thumbnails']->current()->getBaseName() === 'thumbnails') {
             d($t_dir->current());
+
             return $t_dir->current();
             //$this-> getAllThumb($t_dir->current());
         }
     }
 
-    private function getAllThumb($thumbDir) {
+    private function getAllThumb($thumbDir)
+    {
         // d($thumbDir);
         $thumbDirIterator = new DirectoryIterator($thumbDir);
          // Directory Iterator
@@ -284,7 +308,7 @@ class ProjectIterator extends Controller
         $thumbnails = [];
         foreach ($thumbDirIterator as $thumb) {
             if ($thumbDirIterator->current()->isFile()) {
-                 // << only if  isFile()
+                // << only if  isFile()
                 $thumbName = $thumbDirIterator->current()->getBaseName();
                 $thumbnails[$thumbName] = $thumbDirIterator->current();
             }
@@ -302,23 +326,25 @@ class ProjectIterator extends Controller
         @return  ["01"=> "12:15:00", "02"=>"12:10:10", ...];
      */
 
-    public function getDayTime($is_a) {
+    public function getDayTime($is_a)
+    {
         // d($is_a);
         $ts = substr($is_a, 9, -7); // get 01121500
-        $as = str_split($ts,2); //
+        $as = str_split($ts, 2); //
         $day = array_shift($as); // 01
         $waqt = implode(':', $as);
         // d($f,$waqt);
-        if(!isset($this->dayWithTime[$day])) {
-                $this->dayWithTime[$day] = [];
+        if (!isset($this->dayWithTime[$day])) {
+            $this->dayWithTime[$day] = [];
         }
         $this->dayWithTime[$day][] = $waqt;
     }
     // $ta ["01"=> "12:15:00"];
-    public function getTimeSlots($ts) {
+    public function getTimeSlots($ts)
+    {
         // $ta_ = array_map($this->getTime, $tk);
         // d($ts);
-        $ta_ = array_walk($ts, [$this,'getDayTime']);
+        $ta_ = array_walk($ts, [$this, 'getDayTime']);
         d($ts);
         d($this->dayWithTime);
         d($ta_);
@@ -334,35 +360,40 @@ class ProjectIterator extends Controller
         // return $timeslot;
     }
 
-
     // return recentThumb array with thumb name and thumb location
-    public function getRecentThumb() {
+    public function getRecentThumb()
+    {
         return $this->recentThumb;
     }
 
     // return all screens latest thumbnail List
-    public function getLatestThumbList() {
+    public function getLatestThumbList()
+    {
         return $this->latestThumbList;
     }
 
-    public function getScreen() {
+    public function getScreen()
+    {
         return $this->screens;
     }
 
     // return screen folder name in associative array and if date is given then it will comes as second array
-    public function getScreenFolder() {
+    public function getScreenFolder()
+    {
         return $this->screenFolder;
     }
 
     // get all screen thumb of a specific date and screen
-    public function getScreenThumb() {
+    public function getScreenThumb()
+    {
         return $this->thumbList;
     }
     //@param  array $input
     //@return array woth key name is day and value is time in hh:mm:ss format
-    public function getDayTimeList($input) {
-        array_walk($input, [$this, 'getDayTime'] );
+    public function getDayTimeList($input)
+    {
+        array_walk($input, [$this, 'getDayTime']);
+
         return $this->dayWithTime;
     }
 }
-?>
