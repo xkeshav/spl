@@ -1,0 +1,6 @@
+Options +FollowSymlinks
+RewriteEngine on
+RewriteBase /
+#Redirect to project index if Request URI have .~ within
+RewriteCond %{THE_REQUEST}  /+[.~]+/+ [NC]
+RewriteRule ^ /spl/index.html [L,R]

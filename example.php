@@ -1,60 +1,66 @@
-<?php namespace Directree\Example;
-    require_once 'config.php';
-    include_once 'header.php';
-    require_once 'ProjectIterator.php';
-    $obj_prj = new \Directree\ProjectIterator();
-    $projectFolderDir = ARCHIVE.DS.'projectFoto';
+<?php #namespace DTREE\ex;
+    include_once ('main.php');
+    require_once __DIR__.'/directree.class.php';
+    use DTREE as DT;
+    $project_folder = ARCHIVE.DS.'cashbox';
+    DT\Directree::$projectDir = $project_folder;
+    // d(get_included_files());
+    $obj_= new DT\Directree();
+    d($obj_);
     // $obj_prj->getThumb(ARCHIVE.DS.'QGC3-7','s3', '201408');
     // get ALL screen /camera list of selected project and show on left panel dropdown
-    $screenList = $obj_prj->getProjectScreenList($projectFolderDir);
+    $screenList = $obj_->getScreenList();
     d($screenList);
+    // $selectedCamera = !empty($_GET['c']) ? $_GET['c'] : 's3';
+    // $selectedDateYM = '201408';
+    // $obj_->getThumb(Directree::$projectDir, $selectedCamera, $selectedDateYM);
 ?>
-<div class="wrapper">
-    <section id="left" >
-        <figure id="thumb">
-            <img src="<?php echo URL.'img/default.jpg'?>"width="100%" title="Current Thumb" />
-        </figure>
-        <!-- <div id="slider" width="300px"></div> -->
-        <div id="screen">
-            <select class="dropdown" id="selectedScreen">
-                <option value="" selected disabled style="color:#000"  >Select Camera</option>
-        <?php foreach ($screenList as $sc => $sv) {
-                echo "<option value='$sc' title='$sc'>Camera $sc</option>";
-        } // end o foreach ?>
-                <!--   <option value="s2" title="s2">Camera s2</option> -->
-            </select>
-        </div>
-        <div id="calendar"></div>
-        <div id="timeSlot" style="margin-bottom:10px;">
-        <!-- <div class="clickTime"><label>01:10:10</label><span>OK</span></div>  -->
-        </div>
-    </section>
 
-   <section id="right" >
-        <figure>
-            <!-- <figurecaption>S3 DATE 14-10-2014 01:10:10</figurecaption> -->
-            <img src="<?php echo URL.'img/default.jpg'?>" />
-        </figure>
-    </section>
-</div>
+<section id="left" >
+    <figure id="thumb">
+        <img src="<?=IMG?>/default.jpg" width="100%" title="Current Thumb" />
+    </figure>
+    <!-- <div id="slider" width="300px"></div> -->
+    <div id="screen">
+        <select class="dropdown" id="selectedScreen">
+            <option value="" selected disabled style="color:#000"  >Select Camera</option>
+<?php foreach ($screenList as $sc => $sv) {
+            echo "<option value='$sc' title='$sc'>Camera $sc</option>";
+} // end o foreach  ?>
+            <!--   <option value="s2" title="s2">Camera s2</option> -->
+        </select>
+    </div>
+    <div class="datePicker" id="calendar"></div>
+    <div id="timeSlot" style="margin-bottom:10px;">
+        <div class="clickTime"><label>01:10:10</label><span>OK</span></div>
+    </div>
+</section>
+
+<section id="right" >
+    <figure>
+        <!-- <figurecaption>S3 DATE 14-10-2014 01:10:10</figurecaption> -->
+        <img src="<?=IMG?>/default.jpg" width="100%"  />
+    </figure>
+</section>
 <script>
 var $ajax = false;
-    $(function() {
+(function( $ ) {
     // $( "#slider" ).slider();
-    var $location = window.location.protocol + '//' +  window.location.hostname ,
+    var $url = window.location.protocol + '//' +  window.location.hostname,
         $projectFolder = '<?=PROJECT_FOLDER?>',
-        $projectBaseURL = $location + '/' + $projectFolder,
+        $projectBaseURL = '<?=URL?>',
         $requestedFoto = {},
         $thumbList = {};
         $availMonth = {},
         $selectedScreen = false;
+    // console.log($projectBaseURL);
         //$no_ajax = false;
     var $mainImg =  $('section#right figure').children('img').eq(0),
         $thumbImg = $('section#left figure').children('img').eq(0);
     // console.log($projectBaseURL);
     //default setting for jquery ajax call
     $.ajaxSetup({
-        url: $projectBaseURL + '/projects/rightscreen',
+        url: $projectBaseURL + '/rightscreen.php',
         global: false,
         type: 'POST',
         dataType: 'JSON',
@@ -84,13 +90,13 @@ var $ajax = false;
         disabled: false
     });
 
-    // $('#calendar').datepicker().datepicker('disable');
+    $('#calendar').datepicker().datepicker('disable');
     // get month list which ahve thumbnails
     $(document).on('change', '#selectedScreen', function() {
         // console.info('On Change Fired');
         $selectedScreen = $(this).val();
         $requestedFoto.selectedCamera = $selectedScreen;
-        $.get( $projectBaseURL + "/projects/rightscreen", { screen: $selectedScreen } )
+        $.get( $projectBaseURL + "/rightscreen.php", { screen: $selectedScreen } )
         .done(function(resp) {
             // store all availble months of selected screen scanning from directory folder
             // console.log(resp);
@@ -198,7 +204,6 @@ var $ajax = false;
             $thumbImg.add($mainImg).fadeIn('fast');
         });
     });
-
-});
+}( jQuery ));
 //# sourceURL=dynamicScript.js
 </script>

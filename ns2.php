@@ -1,6 +1,4 @@
-<?php namespace One;
-// use One as o;
-require 'ns1.php';
+<?php namespace One\Beta;
 
 //Warning: The use statement with non-compound name 'One' has no effect in /opt/lampp/htdocs/spl/ns2.php on line 1
 

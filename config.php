@@ -20,6 +20,9 @@
 // dev error reporting
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
+ini_set('xdebug.collect_params', '4');
+ini_set('xdebug.collect_vars', 'on');
+ini_set('xdebug.collect_return', '1');
 // var_dump(__DIR__);
 // checking for minimum PHP version
 if (version_compare(PHP_VERSION, '5.3.7', '<')) {
@@ -28,16 +31,17 @@ if (version_compare(PHP_VERSION, '5.3.7', '<')) {
     require_once __DIR__.'/constant.php';
 }
 
-function autoload($class) {
-    try{
-        if(is_readable( strtolower($class). ".php")) {
-            require_once strtolower($class).".php";
+spl_autoload_extensions(".php");
+spl_autoload_register('loadclass');
+
+function loadclass($class)
+{
+    try {
+        if (is_readable(strtolower($class).".class.php")) {
+            include_once strtolower($class).".class.php";
         }
-    } catch(Exception $e) {
-        print "Error:". $e;
+    } catch (Exception $e) {
+        print "Exception:". $e;
+        trigger_error("Unable to load class: $class", E_USER_WARNING);
     }
 }
-
-// spl_autoload_register defines the function that is called every time a file is missing. as we created this
-// function above, every time a file is needed, autoload(THENEEDEDCLASS) is called
-spl_autoload_register("autoload");

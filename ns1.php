@@ -1,6 +1,6 @@
 <?php namespace One;
 
-class Alpha
+class ns1
 {
     public function __construct()
     {

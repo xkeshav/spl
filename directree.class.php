@@ -1,13 +1,13 @@
-<?php namespace Directree;
+<?php namespace DTREE;
 
 /**
- * @access  Public
- * @example called from default.php
- * @author      Keshav Mohta <xkeshav@gmail.com>
+ * PHP SPL Class ProjectIterator
+ * @access  private
+ * @author  Keshav Mohta <xkeshav@gmail.com>
  * @copyright  2014-01-13
- * @name   ProjectIterator.php
  * @todo divide further functions and optimize the code
- * @description
+ * @link http://php.net/manual/en/class.directoryiterator.php
+ * @subpackage  Kint Library for debug  http://raveren.github.io/kint/
  * This class is useful to find data from  multi leveled directory system and interate over folders using SPL function .Suppose you require to find latest thumb  of latest created folder from diffrent date folder of a location
  *
  * Files are saved in
@@ -17,13 +17,16 @@
  * $obj_latest = new latest();
  * $thumbList = $obj_latest->latestThumb($loc);
  */
-use DirectoryIterator;
-use RecursiveDirectoryIterator;
-use FilesystemIterator;
+use \DirectoryIterator as DI;
+use \RecursiveDirectoryIterator as RDI;
+use \RecursiveIteratorIterator as RII;
+use \FilesystemIterator as FI;
 
-class ProjectIterator
+class Directree
 {
     public static $thumb_folder = 'thumbnails';
+    public static $projectDir;
+    public $firstDir;
     private $basepath;
     private $flags;
     protected $iterator;
@@ -35,32 +38,44 @@ class ProjectIterator
     protected $recentThumb = [];
      // [thumb name , thumb location]
     protected $dayWithTime = [];
+    private $dir_ = __DIR__;
 
     public function __construct()
     {
-        // var_dump(__FILE__);
-        // var_dump($base);
-        // echo basename(dirname(__DIR__));
-        $this->iterator = new DirectoryIterator(dirname(__FILE__));
-        // echo $this->iterator->getPath();
-        $this->basepath = $this->iterator->getPath();
-        // self::$thumb_folder = 'thumbnails';
-        $this->flags = FilesystemIterator::SKIP_DOTS | FilesystemIterator::NEW_CURRENT_AND_KEY | FilesystemIterator::KEY_AS_FILENAME;
+        //var_dump(func_get_args());
+        /**
+         * @todo  use variadic function for php 5.6 +
+         * @see  http://php.net/manual/en/functions.arguments.php#functions.variable-arg-list
+         */
+        $this->flags = FI::SKIP_DOTS | FI::NEW_CURRENT_AND_KEY | FI::KEY_AS_PATHNAME | FI::UNIX_PATHS;
+        $this->firstDir = !empty(self::$projectDir) ? self::$projectDir :  $this->dir_;
+        d($this->firstDir, self::$projectDir);
     }
 
-    /** get camera list of a project  */
-    public function getProjectScreenList($projectDir)
+    public function getCompleteList()
     {
-        $dir = (func_num_args()) ? $projectDir : $this->basepath;
-        $RealPath = realpath($dir);
-        // d($RealPath);
-        $Directory = new RecursiveDirectoryIterator($RealPath, $this->flags);
-        // echo "<pre>"; print_r($Directory); echo "</pre>";
-        // self::pre($Directory);
+        var_dump($flags);
+        echo self::$projectDir;
+        foreach (new RII(new RDI(self::$projectDir, FI::NEW_CURRENT_AND_KEY )) as $df) {
+            !d($df);
+        }
+    }
+
+    public static function gcl()
+    {
+        $this->getCompleteList();
+    }
+
+    /** get screen folder of given Directory  */
+    public function getScreenList($mainfolder = '')
+    {
+        // $RealPath = realpath($this->firstDir);
+        // $dir = $this->getDetail($this->firstDir);
+        // d($dir);
+        // $this->iterator = $info['raw'];
+        // d($this->iterator);
+        $Directory = new RDI($this->firstDir, $this->flags);
         // d($Directory);
-        // +d($Directory->__toString());
-        // $Dir_ = iterator_to_array($Directory);
-        // ksort($Dir_); // NOTE: Most Important step
         // get all folder (screen) name of project
         $this->screens = $this->getAllFolder($Directory);
         // d($this->screens);
@@ -125,7 +140,7 @@ class ProjectIterator
         // // ksort($Dir_); // NOTE: Most Important step
         // // get all folder (screen) name of project
         // $this->screens = $this->getAllFolder($Directory);
-        $this->getProjectScreenList($givenDir);
+        $this->getScreenList($givenDir);
         if (!empty($givenCamera)) {
             // d($this->screens);
             // echo "<br/>Inside if";
@@ -182,7 +197,7 @@ class ProjectIterator
         // d($dir);
         $currentDirName = $dir->getFileName();
         $currentDirPath = $dir->getRealPath();
-        $Directory = new RecursiveDirectoryIterator($currentDirPath, $this->flags);
+        $Directory = new RDI($currentDirPath, $this->flags);
         // d($currentDirName,$currentDirPath,$Directory);
         // d($Dir_);
         // echo __LINE__."<BR/>BEFORE IF";
@@ -264,16 +279,48 @@ class ProjectIterator
     }
 
     /*Get all folder name of a directory
-    @param object RecursiveDirectoryIterator $mainDir
-    @return array of object SplFileInfo in namewsie ASC order
+    @param object RecursiveDirectoryIterator $raw
+    @return basic details of any iterator object liek basic name path
+    @ [is_Dir,is_File,Path, Real Path, BaseName, path Name ]
     */
 
+    public function getDetail($rawDir)
+    {
+        // d(func_get_args());
+        $raw = new RDI($rawDir, $this->flags);
+        $is_file = $raw->current()->isFile();
+        $is_dir = $raw->current()->isDir();
+        if ($is_dir) {
+            $p_ =  $raw->current()->getPath();
+            $pn_ = $raw->current()->getPathName();
+            $bn_ = $raw->getBaseName();
+            $fn_ = $raw->getFileName();
+            $rp_ = $raw->getRealPath();
+            $bn_ = $raw->getBaseName();
+        }
+        $op = get_defined_vars();
+        // d($op);
+        return $op;
+    }
+
+    public static function v()
+    {
+        $dv = 'div';
+        list(, $caller) = debug_backtrace(false);
+        // d();
+        $d = call_user_func('', $caller['function']);
+        d($d);
+    }
+
+    /*
+     @param $currentDir DirectoryItertor object
+     */
     private function getAllFolder($currentDir)
     {
         // d($mainDir);
         $subFolder = [];
         foreach ($currentDir as $sub) {
-            if ($currentDir->current()->isDir()) { // << only if  isDir()
+            if ($currentDir->current()->isDir()) { // << only if isDir()
                 $folderName = $currentDir->current()->getBaseName();
                 $subFolder[$folderName] = $currentDir->current();
             }
@@ -302,7 +349,7 @@ class ProjectIterator
     private function getAllThumb($thumbDir)
     {
         // d($thumbDir);
-        $thumbDirIterator = new DirectoryIterator($thumbDir);
+        $thumbDirIterator = new DI($thumbDir);
          // Directory Iterator
         // d($thumbDir_);
         $thumbnails = [];
